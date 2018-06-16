@@ -41,76 +41,60 @@ import sun.awt.SunToolkit;
  * <li>  为组件设置“混合切口”形状。 
  * </ul>
  * <p>
- * A "top-level window" is an instance of the {@code Window} class (or its
- * descendant, such as {@code JFrame}).
+ * “顶层窗口” 是一个{@code Windows}类（或者其后代，例如{@code JFrame}）的一个实例，
  * <p>
- * Some of the mentioned features may not be supported by the native platform.
- * To determine whether a particular feature is supported, the user must use
- * the {@code isTranslucencySupported()} method of the class passing a desired
- * translucency kind (a member of the {@code Translucency} enum) as an
- * argument.
+ * 本地平台(the native platform)可能不支持某些提到的功能(mentioned features)。
+ * 为了确定是否支持一个特定的特性，用户必须使用该类的{@code isTranslucencySupported()}方法，
+ * 传递一个期望的半透明类型（{@code Translucency} 枚举(enum)的成员）作为参数。
  * <p>
- * The per-pixel alpha feature also requires the user to create her/his
- * windows using a translucency-capable graphics configuration.
- * The {@code isTranslucencyCapable()} method must
- * be used to verify whether any given GraphicsConfiguration supports
- * the trasnlcency effects.
+ * 每像素alpha功能还要求用户使用具有半透明功能的图形配置创建她/他的（图形）窗户。
+ * 必须使用{@code isTranslucencyCapable()}方法来验证
+ * 给定的GraphicsConfiguration是否支持trasnlcency效果。
  * <p>
- * <b>WARNING</b>: This class is an implementation detail and only meant
- * for limited use outside of the core platform. This API may change
- * drastically between update release, and it may even be
- * removed or be moved in some other package(s)/class(es).
+ * <b>警告</b>: 该类是实现细节，仅用于核心平台之外的有限使用。
+ * 此API可能会在更新版本之间发生急剧变化，甚至可能会被删除或移入其他某个软件包/类中。
  */
 public final class AWTUtilities {
 
     /**
-     * The AWTUtilities class should not be instantiated
+     * AWTUtilities类不应该被实例化(instantiated)
      */
     private AWTUtilities() {
     }
 
-    /** Kinds of translucency supported by the underlying system.
+    /**
+     * 底层系统支持的半透明性。(Kinds of translucency supported by the underlying system.)
      *  @see #isTranslucencySupported
      */
     public static enum Translucency {
         /**
-         * Represents support in the underlying system for windows each pixel
-         * of which is guaranteed to be either completely opaque, with
-         * an alpha value of 1.0, or completely transparent, with an alpha
-         * value of 0.0.
+         * 表示在Windows底层系统(underlying system for windows)的支持上，
+         * 每个像素(pixel)都保证是完全的不透明的，则alpha值为1.0；
+         * 或者完全透明，其alpha值为0.0
          */
         PERPIXEL_TRANSPARENT,
 
         /**
-         * Represents support in the underlying system for windows all of
-         * the pixels of which have the same alpha value between or including
-         * 0.0 and 1.0.
+         * 表示(Represents)Windows底层系统的支持，其所有像素具有相同的alpha值（包括0.0和1.0）。
          */
         TRANSLUCENT,
 
         /**
-         * Represents support in the underlying system for windows that
-         * contain or might contain pixels with arbitrary alpha values
-         * between and including 0.0 and 1.0.
+         * 表示基础系统支持针对包含或可能包含与之间并且包括0.0和1.0的任意alpha值的像素窗口。
          */
         PERPIXEL_TRANSLUCENT;
     }
 
 
     /**
-     * Returns whether the given level of translucency is supported by
-     * the underlying system.
+     * 返回底层系统是否支持给定的半透明级别(level of translucency)。
      *
-     * Note that this method may sometimes return the value
-     * indicating that the particular level is supported, but
-     * the native windowing system may still not support the
-     * given level of translucency (due to the bugs in
-     * the windowing system).
+     * 请注意，此方法有时可能会返回指示支持特定级别的值，
+     * 但本地窗口系统可能仍不支持给定的半透明级别（由于窗口系统中的错误）。
      *
-     * @param translucencyKind a kind of translucency support
-     *                         (either PERPIXEL_TRANSPARENT,
-     *                         TRANSLUCENT, or PERPIXEL_TRANSLUCENT)
-     * @return whether the given translucency kind is supported
+     * @param translucencyKind 一种受系统支持的半透明类型（PERPIXEL_TRANSPARENT，
+     *              TRANSLUCENT或PERPIXEL_TRANSLUCENT）
+     * @return 是否支持给定的半透明类型
      */
     public static boolean isTranslucencySupported(Translucency translucencyKind) {
         switch (translucencyKind) {
@@ -141,28 +125,24 @@ public final class AWTUtilities {
     }
 
     /**
-     * Set the opacity of the window. The opacity is at the range [0..1].
-     * Note that setting the opacity level of 0 may or may not disable
-     * the mouse event handling on this window. This is
-     * a platform-dependent behavior.
+     * 设置窗口的不透明度(opacity)。 不透明度在[0..1]的范围(range)内。
+     * 请注意，设置不透明度级别为0
+     * 可能会或可能不会禁用此窗口上的鼠标事件处理(mouse event handling on this window)。 
+     * 这是一个依赖于平台的行为(platform-dependent behavior)。
      *
-     * In order for this method to enable the translucency effect,
-     * the isTranslucencySupported() method should indicate that the
-     * TRANSLUCENT level of translucency is supported.
+     * 为了使此方法启用半透明效果(translucency effect)，
+     * isTranslucencySupported() 方法应指示支持半透明的TRANSLUCENT级别。
      *
-     * <p>Also note that the window must not be in the full-screen mode
-     * when setting the opacity value &lt; 1.0f. Otherwise
-     * the IllegalArgumentException is thrown.
+     * <p>
+     * 还要注意，当设置不透明度值<1时，窗口不能处于全屏模式。 
+     * 否则，抛出IllegalArgumentException。
      *
-     * @param window the window to set the opacity level to
-     * @param opacity the opacity level to set to the window
-     * @throws NullPointerException if the window argument is null
-     * @throws IllegalArgumentException if the opacity is out of
-     *                                  the range [0..1]
-     * @throws IllegalArgumentException if the window is in full screen mode,
-     *                                  and the opacity is less than 1.0f
-     * @throws UnsupportedOperationException if the TRANSLUCENT translucency
-     *                                       kind is not supported
+     * @param window 设置不透明度级别的窗口
+     * @param opacity 设置窗口的不透明度级别
+     * @throws NullPointerException 如果窗口参数为空(null)
+     * @throws IllegalArgumentException 如果不透明度超出范围[0..1]
+     * @throws IllegalArgumentException 如果窗口处于全屏模式，并且不透明度小于1.0(float)
+     * @throws UnsupportedOperationException 如果不支持TRANSLUCENT半透明类型
      */
     public static void setWindowOpacity(Window window, float opacity) {
         if (window == null) {
@@ -174,11 +154,10 @@ public final class AWTUtilities {
     }
 
     /**
-     * Get the opacity of the window. If the opacity has not
-     * yet being set, this method returns 1.0.
+     * 获取窗口的不透明度。如果不透明度尚未设置，则该方法返回1.0。
      *
-     * @param window the window to get the opacity level from
-     * @throws NullPointerException if the window argument is null
+     * @param window 获取不透明度级别的窗口
+     * @throws NullPointerException 如果窗口参数为空
      */
     public static float getWindowOpacity(Window window) {
         if (window == null) {
@@ -190,11 +169,10 @@ public final class AWTUtilities {
     }
 
     /**
-     * Returns whether the windowing system supports changing the shape
-     * of top-level windows.
-     * Note that this method may sometimes return true, but the native
-     * windowing system may still not support the concept of
-     * shaping (due to the bugs in the windowing system).
+     * 返回窗口系统是否支持改变顶层窗口的形状(shape)。
+     * 
+     * 请注意，该方法有时可能返回true，
+     * 但是本机窗口系统可能仍然不支持整形的概念(concept of shaping)（由于窗口系统中的错误）。
      */
     public static boolean isWindowShapingSupported() {
         Toolkit curToolkit = Toolkit.getDefaultToolkit();
@@ -205,14 +183,12 @@ public final class AWTUtilities {
     }
 
     /**
-     * Returns an object that implements the Shape interface and represents
-     * the shape previously set with the call to the setWindowShape() method.
-     * If no shape has been set yet, or the shape has been reset to null,
-     * this method returns null.
+     * 返回实现Shape接口的对象，并表示之前(previously)通过调用 setWindowShape() 方法设置的形状。 
+     * 如果尚未设置形状，或者形状已重置为空(null)，则此方法返回null。
      *
-     * @param window the window to get the shape from
-     * @return the current shape of the window
-     * @throws NullPointerException if the window argument is null
+     * @param window 从中获取形状的窗口
+     * @return 窗口的当前形状
+     * @throws NullPointerException 如果窗口参数为空(null)
      */
     public static Shape getWindowShape(Window window) {
         if (window == null) {
@@ -226,7 +202,8 @@ public final class AWTUtilities {
      * Sets a shape for the given window.
      * If the shape argument is null, this methods restores
      * the default shape making the window rectangular.
-     * <p>Note that in order to set a shape, the window must be undecorated.
+     * <p>
+     * Note that in order to set a shape, the window must be undecorated.
      * If the window is decorated, this method ignores the {@code shape}
      * argument and resets the shape to null.
      * <p>Also note that the window must not be in the full-screen mode
